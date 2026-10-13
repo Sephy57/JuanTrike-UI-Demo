@@ -1,20 +1,47 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { DemoProvider, useDemo } from './src/booking/DemoContext';
+import { DemoPanel } from './src/components/DemoPanel';
+import { PassengerScreen } from './src/screens/PassengerScreen';
+import { DriverScreen } from './src/screens/DriverScreen';
+import { WelcomeScreen } from './src/screens/WelcomeScreen';
 
-export default function App() {
+function Shell() {
+  const { mode, setMode } = useDemo();
+  const [started, setStarted] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
+
+  if (!started) {
+    return (
+      <WelcomeScreen
+        onChoose={(chosen) => {
+          setMode(chosen);
+          setStarted(true);
+        }}
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      {mode === 'passenger' ? (
+        <PassengerScreen onOpenPanel={() => setPanelOpen(true)} />
+      ) : (
+        <DriverScreen onOpenPanel={() => setPanelOpen(true)} />
+      )}
+      <DemoPanel visible={panelOpen} onClose={() => setPanelOpen(false)} />
+    </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <DemoProvider>
+        <StatusBar style="dark" />
+        <Shell />
+      </DemoProvider>
+    </SafeAreaProvider>
+  );
+}

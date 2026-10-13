@@ -1,0 +1,19 @@
+# Device regression for role switching on the header buttons.
+# Each step asserts the single resulting role; repeated taps must not flip twice.
+# Prereq: Metro on 8081 with `adb reverse tcp:8081 tcp:8081`, app com.juantrike.uidemo installed.
+appId: com.juantrike.uidemo
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Welcome to JuanTrike"
+- tapOn: "Passenger Mode"
+- assertVisible: "Driver Mode"
+- tapOn: "Driver Mode"
+- assertVisible: "Passenger Mode"
+- tapOn: "Passenger Mode"
+- assertVisible: "Driver Mode"
+# Repeated taps on the same header button, back to back.
+- tapOn: "Driver Mode"
+- tapOn: "Driver Mode"
+- tapOn: "Driver Mode"
+- assertVisible: "Passenger Mode"

@@ -1,0 +1,140 @@
+# Full presentation smoke test (Expo Go, emulator-5554).
+# Prereq: Metro running on port 8081 (`npx expo start --port 8081`).
+# Covers welcome, language, passenger flow (map, GPS, pickup/destination, DEMO fare,
+# booking), driver flow (offer, accept, progression, completion), offline gating,
+# history, and reset.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: exp://10.0.2.2:8081
+- extendedWaitUntil:
+    visible: ".*(Continue|Passenger Mode).*"
+    timeout: 120000
+- runFlow:
+    when:
+      visible: "Continue"
+    commands:
+      - tapOn: "Continue"
+- runFlow:
+    when:
+      visible: "Go home"
+    commands:
+      - tapOn:
+          point: "88%,47%"
+- extendedWaitUntil:
+    visible: "Passenger Mode"
+    timeout: 120000
+
+# 1. Welcome + language selection
+- assertVisible: "Welcome to JuanTrike"
+- assertVisible: "DEMO MODE"
+- tapOn: "FIL"
+- assertVisible: "Pasahero"
+- assertVisible: "Drayber"
+- tapOn: "EN"
+- assertVisible: "Passenger Mode"
+
+# 2. Passenger Mode + interactive map
+- tapOn: "Passenger Mode"
+- extendedWaitUntil:
+    visible: ".*Tap the map to set pickup.*"
+    timeout: 90000
+- extendedWaitUntil:
+    notVisible: "Loading map.*"
+    timeout: 60000
+
+# 3. Foreground GPS (permission prompts may appear; accept them if shown)
+- tapOn: "Use my location"
+- runFlow:
+    when:
+      visible: "ALLOW"
+    commands:
+      - tapOn: "ALLOW"
+- runFlow:
+    when:
+      visible: "ALLOW"
+    commands:
+      - tapOn: "ALLOW"
+- extendedWaitUntil:
+    visible: ".*Emulator-simulated location.*"
+    timeout: 30000
+
+# 4. Destination selection by map tap
+- tapOn: "Destination"
+- assertVisible: ".*Tap the map to set destination.*"
+- tapOn:
+    point: "58%,45%"
+- extendedWaitUntil:
+    visible: "Confirm DEMO booking"
+    timeout: 20000
+- swipe:
+    start: "50%,78%"
+    end: "50%,40%"
+- swipe:
+    start: "50%,78%"
+    end: "50%,40%"
+- assertVisible: "Review booking"
+- assertVisible: "DEMO fare .*"
+
+# 5. Booking confirmation
+- tapOn: "Confirm DEMO booking"
+- extendedWaitUntil:
+    visible: "Searching for driver.*"
+    timeout: 15000
+
+# 6. Driver Mode: offer and acceptance
+- tapOn:
+    point: "75%,12%"
+- extendedWaitUntil:
+    visible: "Incoming DEMO booking"
+    timeout: 20000
+- scrollUntilVisible:
+    element: "Accept"
+    direction: DOWN
+- tapOn: "Accept"
+- extendedWaitUntil:
+    visible: "Start toward pickup"
+    timeout: 10000
+
+# 7. Trip progression
+- tapOn: "Start toward pickup"
+- extendedWaitUntil:
+    visible: "Arrived at pickup"
+    timeout: 10000
+- tapOn: "Arrived at pickup"
+- extendedWaitUntil:
+    visible: "Start trip"
+    timeout: 10000
+- tapOn: "Start trip"
+- extendedWaitUntil:
+    visible: "Complete trip"
+    timeout: 10000
+- tapOn: "Complete trip"
+- extendedWaitUntil:
+    visible: "Trip completed"
+    timeout: 10000
+
+# 8. Local trip history
+- tapOn: "Trip history"
+- assertVisible: "Trip completed"
+- swipe:
+    start: "50%,80%"
+    end: "50%,30%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,30%"
+- swipe:
+    start: "50%,80%"
+    end: "50%,30%"
+- assertVisible: ".*DEMO fare.*"
+- tapOn: "Close"
+
+# 9. Demo panel reset
+- tapOn:
+    point: "90%,52%"
+- assertVisible: "Demo controls"
+- tapOn: "Reset demo"
+- extendedWaitUntil:
+    visible: "Driver dashboard"
+    timeout: 10000

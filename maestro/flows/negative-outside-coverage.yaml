@@ -1,0 +1,24 @@
+# Scenario C: a destination outside every synthetic TODA zone is refused.
+appId: com.juantrike.uidemo
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Welcome to JuanTrike"
+    timeout: 120000
+- tapOn: "Passenger Mode"
+- extendedWaitUntil:
+    visible: ".*Tap the map to set pickup.*"
+    timeout: 90000
+- tapOn: "Demo controls"
+- scrollUntilVisible:
+    element: "Simulate out-of-coverage booking"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "Simulate out-of-coverage booking"
+- scrollUntilVisible:
+    element: "Outside demo coverage — not bookable"
+    direction: DOWN
+    timeout: 15000
+- assertVisible: "Restricted area.*"
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-01-outside-coverage-denied

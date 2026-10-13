@@ -1,0 +1,33 @@
+# Scenario D: reset while a booking is active. The booking is cleared and no offer appears later.
+appId: com.juantrike.uidemo
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Welcome to JuanTrike"
+    timeout: 120000
+- tapOn: "Passenger Mode"
+- extendedWaitUntil:
+    visible: ".*Tap the map to set pickup.*"
+    timeout: 90000
+- tapOn: "Demo controls"
+- tapOn: "Restore demo locations"
+- extendedWaitUntil:
+    visible: "Confirm DEMO booking"
+    timeout: 10000
+- tapOn: "Confirm DEMO booking"
+- extendedWaitUntil:
+    visible: ".*Booking in progress.*"
+    timeout: 15000
+- tapOn: "Demo controls"
+- scrollUntilVisible:
+    element: "Reset demo"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "Reset demo"
+- extendedWaitUntil:
+    visible: ".*Tap the map to set pickup.*"
+    timeout: 10000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-01-reset-during-booking
+- assertNotVisible: ".*Booking in progress.*"
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-02-after-reset-no-booking

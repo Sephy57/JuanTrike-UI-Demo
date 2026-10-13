@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>JuanTrike POC screenshots</title>
+<style>
+  :root { --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --bg:#f8fafc; --card:#ffffff; --blue:#1F5FBF; --warn:#F2A900; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ink:#e2e8f0; --muted:#94a3b8; --line:#334155; --bg:#0f172a; --card:#1e293b; --blue:#7fb0ff; }
+  }
+  :root[data-theme="dark"] { --ink:#e2e8f0; --muted:#94a3b8; --line:#334155; --bg:#0f172a; --card:#1e293b; --blue:#7fb0ff; }
+  body { margin:0; padding:16px; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  h2 { font-size:17px; margin:24px 0 8px; }
+  p.lead { color:var(--muted); margin:0 0 16px; }
+  .note { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--warn); padding:10px 12px; border-radius:8px; margin-bottom:16px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  figure img { display:block; width:100%; height:auto; }
+  figcaption { padding:10px 12px; font-size:14px; }
+  figcaption b { color:var(--blue); display:block; margin-bottom:2px; }
+  .stage { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+</style>
+</head>
+<body>
+<h1>JuanTrike POC — Android emulator screenshots</h1>
+<p class="lead">Captured from the debug build on the <code>JuanTrike_API36_X86_64</code> emulator, Expo SDK 57. Every label marked SYNTHETIC, SIMULATED or DEMO is demo data.</p>
+
+<div class="note">
+  These are real captures from the running app, not generated images. Each screenshot's name matches the stage it shows, and the run they came from is recorded in <a href="TEST_RESULTS.md">TEST_RESULTS.md</a>. Screenshots 01–09 are from the earlier run (before the clock change); 10–23 are from the later run that completed the positive booking.
+</div>
+
+<h2>1. Start and map</h2>
+<div class="grid">
+  <figure>
+    <img src="screenshots/01-welcome.png" alt="Welcome screen" />
+    <figcaption><span class="stage">Welcome</span><b>Choose a mode</b>Passenger or Driver. Labelled DEMO MODE.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/02-passenger-pickup-coverage-route.png" alt="Passenger map with coverage and simulated route" />
+    <figcaption><span class="stage">Passenger home</span><b>Map, coverage and simulated route</b>Pickup inside SYNTHETIC TODA A; dashed simulated route to destination.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/10-passenger-pickup-destination-coverage.png" alt="Pickup and destination inside synthetic coverage" />
+    <figcaption><span class="stage">Pickup and destination</span><b>Synthetic TODA coverage check</b>Both points read "Inside synthetic coverage: SYNTHETIC TODA A".</figcaption>
+  </figure>
+</div>
+
+<h2>2. Booking and driver matching</h2>
+<div class="grid">
+  <figure>
+    <img src="screenshots/03-booking-confirmed-map-locked.png" alt="Booking confirmed with map locked" />
+    <figcaption><span class="stage">Booking confirmation</span><b>Booking confirmed</b>Map locked while the booking runs.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/11-booking-confirmed-paused-request.png" alt="Booking confirmed while simulation paused" />
+    <figcaption><span class="stage">Paused request</span><b>Confirmed while paused</b>The simulation is held at the request step until resumed.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/25-passenger-offer-1-of-3-countdown.png" alt="Passenger view: searching, offer 1 of 3 with countdown" />
+    <figcaption><span class="stage">Passenger offer (final run)</span><b>Offer 1 of 3 · Expires in 13 s</b>Passenger view while the offer countdown is running.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/04-searching-offer-1-of-3.png" alt="Searching for driver, offer 1 of 3" />
+    <figcaption><span class="stage">Driver search</span><b>Offer 1 of 3</b>Countdown running (Expires in 18 s).</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/05-offer-expired-escalated-offer-2-of-3.png" alt="Offer expired, escalated to offer 2 of 3" />
+    <figcaption><span class="stage">Escalation</span><b>Offer expired → offer 2 of 3</b>The first driver did not respond; the next eligible driver is offered.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/21-offer-2-of-3-escalated.png" alt="Offer 2 of 3 with countdown" />
+    <figcaption><span class="stage">Escalation (second run)</span><b>Offer 2 of 3 · Expires in 13 s</b>Second offer after the first expired on the device.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/06-driver-dashboard-fifo-queue.png" alt="Driver dashboard with synthetic FIFO queue" />
+    <figcaption><span class="stage">Driver dashboard</span><b>Synthetic FIFO queue</b>Eligibility shown for this pickup.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/12-driver-incoming-offer-fare.png" alt="Driver incoming offer with distance and DEMO fare" />
+    <figcaption><span class="stage">Driver offer</span><b>Incoming offer</b>Straight-line distance, DEMO fare (not an official tariff), Decline and Accept.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/07-driver-incoming-offer.png" alt="Driver incoming offer card" />
+    <figcaption><span class="stage">Driver offer (earlier run)</span><b>Incoming offer card</b>Accept and Decline shown.</figcaption>
+  </figure>
+</div>
+
+<h2>3. Positive flow: accept, navigate, trip, pay</h2>
+<div class="grid">
+  <figure>
+    <img src="screenshots/13-driver-accepted-on-the-way.png" alt="Driver accepted, on the way to pickup" />
+    <figcaption><span class="stage">Driver acceptance</span><b>Accepted — on the way (simulated)</b>Mang Ben assigned; the passenger side shows the assignment.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/14-approach-simulated-eta-remaining.png" alt="Simulated approach with ETA and remaining distance" />
+    <figcaption><span class="stage">Navigation to pickup</span><b>Simulated approach</b>ETA ~11 s; remaining 313 m (simulated).</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/15-driver-arrived-start-trip.png" alt="Driver arrived at pickup, Start trip" />
+    <figcaption><span class="stage">Arrival</span><b>Driver has arrived</b>Start trip becomes available.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/16-trip-started-vehicle-moving-route.png" alt="Trip started, vehicle moving along the route" />
+    <figcaption><span class="stage">Active trip</span><b>Vehicle moving on the route</b>Remaining 971 m (simulated); the vehicle marker is on the dashed route.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/17-trip-near-destination-vehicle.png" alt="Vehicle near destination" />
+    <figcaption><span class="stage">Route to destination</span><b>Approaching destination</b>Remaining 24 m (simulated); destination marker visible.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/18-trip-completed-cash-demo.png" alt="Trip completed with DEMO cash collected" />
+    <figcaption><span class="stage">Trip completed and cash</span><b>Completed — cash (DEMO)</b>DEMO fare ₱39; "Cash collected (DEMO, not real money)".</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/19-return-to-queue.png" alt="Driver returned to queue" />
+    <figcaption><span class="stage">Return to queue</span><b>Back to the dashboard</b>The active booking is cleared and the driver is idle.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/20-trip-history-completed.png" alt="Trip history showing the completed trip" />
+    <figcaption><span class="stage">History</span><b>Completed trip recorded</b>DEMO Pickup A → DEMO Destination B, 1.42 km, ₱39, Trip completed.</figcaption>
+  </figure>
+</div>
+
+<h2>4. Negative and control scenarios</h2>
+<div class="grid">
+  <figure>
+    <img src="screenshots/22-scenario-no-eligible-driver-cancelled.png" alt="Trip cancelled after no eligible driver accepted" />
+    <figcaption><span class="stage">Unsuccessful driver matching</span><b>No eligible driver</b>Both offers expired; the booking ends as cancelled (DEMO).</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/08-trip-cancelled-no-driver.png" alt="Trip cancelled after no eligible driver (earlier run)" />
+    <figcaption><span class="stage">Unsuccessful matching (earlier run)</span><b>Trip cancelled</b>Same outcome from the earlier run.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/23-demo-panel-pause-speed-decline-expiry.png" alt="Demo control panel with pause, speed, decline and expiry controls" />
+    <figcaption><span class="stage">Demo control panel</span><b>Pause, speed, decline, expiry, reset</b>Controls act on the same shared state.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/09-demo-control-panel.png" alt="Demo control panel" />
+    <figcaption><span class="stage">Demo control panel (earlier run)</span><b>Presenter controls</b>Switch mode, example booking, out-of-coverage example.</figcaption>
+  </figure>
+</div>
+
+<h2>Not captured</h2>
+<div class="note">
+  Not yet on the device: the passenger view after driver accept (assignment and approach status), passenger-side trip history, the out-of-coverage booking (confirm disabled), simulate driver decline, reset during an active booking, and the offline map fallback. The out-of-coverage and decline behaviours are covered by automated tests; the offline fallback is implemented but untested. See <a href="TEST_RESULTS.md">TEST_RESULTS.md</a>.
+</div>
+
+<h2>5. Final acceptance run (same session, after the fixes)</h2>
+<div class="grid">
+  <figure>
+    <img src="screenshots/26-final-run-pickup-destination.png" alt="Final run: pickup and destination" />
+    <figcaption><span class="stage">Final run: pickup and destination</span><b>Final run: pickup and destination</b>Both points inside SYNTHETIC TODA A.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/27-final-run-paused-before-confirm.png" alt="Final run: paused before confirm" />
+    <figcaption><span class="stage">Final run: paused before confirm</span><b>Final run: paused before confirm</b>Simulation paused before the booking is confirmed.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/28-final-run-booking-confirmed-paused.png" alt="Final run: booking held while paused" />
+    <figcaption><span class="stage">Final run: booking held while paused</span><b>Final run: booking held while paused</b>Request is held at "Searching for driver" until resumed.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/29-final-run-driver-accept.png" alt="Final run: driver accepts" />
+    <figcaption><span class="stage">Final run: driver accepts</span><b>Final run: driver accepts</b>Driver card shows the accepted booking, on the way.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/30-final-run-passenger-view-after-accept.png" alt="Final run: passenger view after accept" />
+    <figcaption><span class="stage">Final run: passenger view after accept</span><b>Final run: passenger view after accept</b>Shows the driver dashboard after accept, not the passenger view; the passenger view after accept was not captured cleanly (see TEST_RESULTS §10).</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/31-final-run-passenger-driver-assignment.png" alt="Passenger sees the assigned driver" />
+    <figcaption><span class="stage">Passenger sees the assigned driver</span><b>Passenger sees the assigned driver</b>Passenger status card: driver name, TODA and body number.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/32-final-run-driver-approach-started.png" alt="Simulated approach started" />
+    <figcaption><span class="stage">Simulated approach started</span><b>Simulated approach started</b>ETA about 20 s, remaining 596 m (simulated).</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/33-final-run-trip-started.png" alt="Trip started" />
+    <figcaption><span class="stage">Trip started</span><b>Trip started</b>Remaining 489 m (simulated); Complete trip shown.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/34-final-run-trip-progress.png" alt="Simulated movement toward destination" />
+    <figcaption><span class="stage">Simulated movement toward destination</span><b>Simulated movement toward destination</b>Remaining 188 m (simulated); vehicle marker on the route.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/35-final-run-trip-completed-cash.png" alt="Trip completed, DEMO cash" />
+    <figcaption><span class="stage">Trip completed, DEMO cash</span><b>Trip completed, DEMO cash</b>DEMO fare ₱26; "Cash collected (DEMO, not real money)".</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/36-final-run-driver-history.png" alt="Driver trip history" />
+    <figcaption><span class="stage">Driver trip history</span><b>Driver trip history</b>One "Trip completed" entry, 0.47 km, DEMO ₱26.</figcaption>
+  </figure>
+</div>
+
+<h2>Still missing for PRESENTATION_READY</h2>
+<div class="note">Passenger trip history after completion; a full repeat of the positive run from reset; device runs of decline, outside-coverage booking, reset during an active booking, and the offline map fallback. See TEST_RESULTS.md §11.</div>
+
+<h2>Final standalone build (release APK, no Metro)</h2>
+<p class="lead">Captured on the x86_64 emulator from <code>dist/presentation/JuanTrike-x86_64-release.apk</code> (SHA-256 4bc3d3c3…fe37f). Runs 5 and 6 are both 45/45 steps. Full details: <a href="TEST_RESULTS.md">TEST_RESULTS.md section 12</a>.</p>
+
+<h3>Passenger and driver flow (run 5; run 6 is the same flow)</h3>
+<div class="grid">
+  <figure>
+    <img src="screenshots/device/run5-01-passenger-map.png" alt="Passenger map on the release build" />
+    <figcaption><span class="stage">Passenger</span><b>Map and mode</b>Real OpenStreetMap tiles, while online. Labelled DEMO MODE.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/run5-02-passenger-review-booking.png" alt="Passenger review with pickup and destination inside SYNTHETIC TODA A" />
+    <figcaption><span class="stage">Passenger</span><b>Review booking</b>Pickup and destination inside SYNTHETIC TODA A. DEMO fare shown.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/run5-04-driver-incoming-offer.png" alt="Driver incoming offer at the top of the driver sheet" />
+    <figcaption><span class="stage">Driver</span><b>Incoming offer</b>Offer card at the top with countdown, Decline and Accept.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/run5-05-driver-accepted.png" alt="Driver accepted, start toward pickup" />
+    <figcaption><span class="stage">Driver</span><b>Accepted</b>Driver accepted; the next step is Start toward pickup.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/run5-06-trip-completed-cash.png" alt="Trip completed with DEMO cash collected" />
+    <figcaption><span class="stage">Driver</span><b>Trip completed</b>DEMO fare ₱39, cash collected (DEMO, not real money).</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/run5-07-driver-history.png" alt="Driver trip history with the completed trip" />
+    <figcaption><span class="stage">Driver</span><b>Driver history</b>One completed entry: Mang Ben, 1.42 km, DEMO fare.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/run5-08-passenger-history.png" alt="Passenger trip history with the completed trip" />
+    <figcaption><span class="stage">Passenger</span><b>Passenger history</b>The same single completed trip, shown on the passenger side.</figcaption>
+  </figure>
+</div>
+
+<h3>Driver queue, three offers and no-driver outcome</h3>
+<div class="grid">
+  <figure>
+    <img src="screenshots/device/neg-three-01-offer-1-of-3-mang-ben.png" alt="Offer 1 of 3 to Mang Ben" />
+    <figcaption><span class="stage">Three offers</span><b>Offer 1 of 3</b>Mang Ben, TODA-A, body AB-014.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-three-02-offer-2-of-3-mang-joel.png" alt="Offer 2 of 3 to Mang Joel" />
+    <figcaption><span class="stage">Three offers</span><b>Offer 2 of 3</b>Mang Ben's offer expired. Mang Joel, TODA-A, body AJ-031.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-three-03-offer-3-of-3-mang-ernie.png" alt="Offer 3 of 3 to Mang Ernie" />
+    <figcaption><span class="stage">Three offers</span><b>Offer 3 of 3</b>Mang Joel's offer expired. Mang Ernie, TODA-A, body AE-047 (synthetic).</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-three-04-no-driver-cancelled.png" alt="Driver view: Trip cancelled" />
+    <figcaption><span class="stage">Three offers</span><b>Trip cancelled</b>After the third expiry the attempt cap is reached. No driver accepted.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-three-05-passenger-booking-ended.png" alt="Passenger view after the booking ended" />
+    <figcaption><span class="stage">Three offers</span><b>Passenger after the end</b>Banner reads "Booking ended — tap New booking to continue".</figcaption>
+  </figure>
+</div>
+
+<h3>Negative scenarios on the release build</h3>
+<div class="grid">
+  <figure>
+    <img src="screenshots/device/neg-decline-release-01-first-offer-mang-ben.png" alt="First offer to Mang Ben before declining" />
+    <figcaption><span class="stage">Decline</span><b>First offer</b>Mang Ben's offer, before the decline.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-decline-release-02-second-offer-after-decline.png" alt="Second offer to Mang Joel after decline" />
+    <figcaption><span class="stage">Decline</span><b>Next driver offered</b>After the decline, the next eligible driver (Mang Joel) is offered.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-outside-release-01-coverage-denied.png" alt="Outside-coverage destination refused" />
+    <figcaption><span class="stage">Outside coverage</span><b>Booking denied</b>"Outside demo coverage — not bookable". Confirm is disabled.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-reset-release-01-reset-during-booking.png" alt="Reset during an active booking" />
+    <figcaption><span class="stage">Reset</span><b>Reset during booking</b>Booking cleared; the map shows "Tap the map to set pickup".</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/neg-reset-release-02-after-reset-no-booking.png" alt="After reset, no booking" />
+    <figcaption><span class="stage">Reset</span><b>After reset</b>No booking and no later offer.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/release-controls-panel.png" alt="Demo controls panel on the release build" />
+    <figcaption><span class="stage">Demo controls</span><b>Controls on the release build</b>Pause/Resume and speed (1x to 2x) verified.</figcaption>
+  </figure>
+</div>
+
+<h3>Offline map fallback (release build, no Metro)</h3>
+<div class="grid">
+  <figure>
+    <img src="screenshots/device/release-offline-01-online-tiles.png" alt="Map with live tiles while online" />
+    <figcaption><span class="stage">Online</span><b>Live tiles</b>OpenStreetMap tiles and attribution while the network is on.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/release-offline-02-network-off-cached-tiles-not-fallback.png" alt="Network off with tiles from the WebView cache" />
+    <figcaption><span class="stage">Offline, cached</span><b>Not a fallback</b>Network off, but tiles from an earlier online session are still in the WebView cache. Cached geography, not a live map.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/release-offline-03-network-off-no-cache-fallback.png" alt="Offline fallback drawing with the tiles error" />
+    <figcaption><span class="stage">Offline fallback</span><b>Fallback drawing</b>Network off and cache cleared. Synthetic zones drawn as SVG; error "Map tiles could not be loaded". No live GPS.</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/device/release-offline-04-network-restored-tiles.png" alt="Map after network restored with live tiles" />
+    <figcaption><span class="stage">Recovery</span><b>Network restored</b>Live tiles and attribution return after a relaunch.</figcaption>
+  </figure>
+</div>
+
+</body>
+</html>

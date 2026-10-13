@@ -39,3 +39,17 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Local working files and evidence not for publication
+tmp-maestro/
+maestro/output/
+data-processing/raw/
+hs_err_pid*.log
+*.apk
+*.aab
+.claude/*.lock
+.claude/settings.local.json
+data-processing/
+# Internal reports and raw build logs (local paths; private project references)
+docs/PROJECT_ISOLATION_REPORT.md
+docs/logs/

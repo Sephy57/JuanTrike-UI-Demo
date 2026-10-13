@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JuanTrike Demo Screenshots</title>
+<style>
+  :root { --bg:#F3F5F9; --card:#fff; --text:#15202F; --muted:#5B6778; --border:#DCE2EC; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0F1724; --card:#172233; --text:#E8EEF7; --muted:#9AA8BC; --border:#2A3A52; } }
+  :root[data-theme="dark"] { --bg:#0F1724; --card:#172233; --text:#E8EEF7; --muted:#9AA8BC; --border:#2A3A52; }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; margin: 0; padding: 16px; }
+  h1 { font-size: 22px; margin: 8px 0 4px; }
+  p { color: var(--muted); font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  figure { margin: 0; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 10px; }
+  figure img { width: 100%; height: auto; border-radius: 8px; display: block; }
+  figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<h1>JuanTrike UI Demo — Emulator Screenshots</h1>
+<p>Captured from the Android emulator (API 36) running the app in Expo Go. Simulated booking is labelled DEMO in the app.</p>
+<div class="grid">
+  <figure><a href="screenshots/01-welcome.png"><img src="screenshots/01-welcome.png" alt="Welcome"></a><figcaption>Welcome, language toggle, DEMO MODE</figcaption></figure>
+  <figure><a href="screenshots/03-passenger-home.png"><img src="screenshots/03-passenger-home.png" alt="Passenger home"></a><figcaption>Passenger home with interactive map</figcaption></figure>
+  <figure><a href="screenshots/05-gps-permission.png"><img src="screenshots/05-gps-permission.png" alt="GPS permission"></a><figcaption>Location permission prompt</figcaption></figure>
+  <figure><a href="screenshots/06-gps-marker.png"><img src="screenshots/06-gps-marker.png" alt="GPS marker"></a><figcaption>GPS marker, labelled emulator-simulated</figcaption></figure>
+  <figure><a href="screenshots/06-destination-selected.png"><img src="screenshots/06-destination-selected.png" alt="Destination selected"></a><figcaption>Pickup and destination selected on the map</figcaption></figure>
+  <figure><a href="screenshots/07-review-booking.png"><img src="screenshots/07-review-booking.png" alt="Review booking"></a><figcaption>Booking review with DEMO fare</figcaption></figure>
+  <figure><a href="screenshots/09-searching-example.png"><img src="screenshots/09-searching-example.png" alt="Searching"></a><figcaption>Booking in progress, map locked</figcaption></figure>
+  <figure><a href="screenshots/10-driver-dashboard.png"><img src="screenshots/10-driver-dashboard.png" alt="Driver dashboard"></a><figcaption>Driver dashboard</figcaption></figure>
+  <figure><a href="screenshots/11-incoming-booking.png"><img src="screenshots/11-incoming-booking.png" alt="Incoming booking"></a><figcaption>Incoming DEMO booking</figcaption></figure>
+  <figure><a href="screenshots/12-driver-accepted.png"><img src="screenshots/12-driver-accepted.png" alt="Driver accepted"></a><figcaption>Driver acceptance</figcaption></figure>
+  <figure><a href="screenshots/14-driver-arrived.png"><img src="screenshots/14-driver-arrived.png" alt="Driver arrived"></a><figcaption>Driver arrived at pickup</figcaption></figure>
+  <figure><a href="screenshots/16-trip-completed-driver.png"><img src="screenshots/16-trip-completed-driver.png" alt="Trip completed"></a><figcaption>Completed DEMO trip (driver)</figcaption></figure>
+  <figure><a href="screenshots/17-passenger-completed.png"><img src="screenshots/17-passenger-completed.png" alt="Passenger completed"></a><figcaption>Same trip seen by the passenger</figcaption></figure>
+  <figure><a href="screenshots/18-trip-history.png"><img src="screenshots/18-trip-history.png" alt="Trip history"></a><figcaption>Local trip history</figcaption></figure>
+  <figure><a href="screenshots/demo-panel.png"><img src="screenshots/demo-panel.png" alt="Demo panel"></a><figcaption>Demo control panel</figcaption></figure>
+  <figure><a href="screenshots/16-filipino-passenger.png"><img src="screenshots/16-filipino-passenger.png" alt="Filipino"></a><figcaption>Filipino language</figcaption></figure>
+  <figure><a href="screenshots/map-zoom-out.png"><img src="screenshots/map-zoom-out.png" alt="Map zoom"></a><figcaption>Map zoom and pan</figcaption></figure>
+</div>
+</body>
+</html>

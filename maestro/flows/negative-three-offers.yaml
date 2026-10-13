@@ -1,0 +1,41 @@
+# Scenario B: three sequential offers, each expires without a response. The booking then ends
+# with no driver. Synthetic eligible drivers for TODA-A: Mang Ben, Mang Joel, Mang Ernie.
+# Each offer is identified by the driver name on the offer card (exact text match).
+# Run: maestro test -e RUN=neg-three maestro/flows/negative-three-offers.yaml
+appId: com.juantrike.uidemo
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Welcome to JuanTrike"
+    timeout: 120000
+- tapOn: "Passenger Mode"
+- extendedWaitUntil:
+    visible: ".*Tap the map to set pickup.*"
+    timeout: 90000
+- tapOn: "Demo controls"
+- tapOn: "Restore demo locations"
+- extendedWaitUntil:
+    visible: "Confirm DEMO booking"
+    timeout: 10000
+- tapOn: "Confirm DEMO booking"
+- extendedWaitUntil:
+    visible: ".*Booking in progress.*"
+    timeout: 15000
+- tapOn: "Driver Mode"
+- extendedWaitUntil:
+    visible: "Mang Ben"
+    timeout: 15000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-01-offer-1-of-3-mang-ben
+- extendedWaitUntil:
+    visible: "Mang Joel"
+    timeout: 60000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-02-offer-2-of-3-mang-joel
+- extendedWaitUntil:
+    visible: "Mang Ernie"
+    timeout: 60000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-03-offer-3-of-3-mang-ernie
+- extendedWaitUntil:
+    visible: "Trip cancelled"
+    timeout: 90000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-04-no-driver-cancelled

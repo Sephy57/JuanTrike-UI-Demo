@@ -1,0 +1,79 @@
+# Full positive booking workflow on the Android device (com.juantrike.uidemo, dev build + Metro).
+# Run with: maestro test -e RUN=run1 maestro/flows/positive-run.yaml   (from the project root)
+# Screenshots land in docs/presentation/screenshots/device/<RUN>-*.png
+appId: com.juantrike.uidemo
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Welcome to JuanTrike"
+    timeout: 120000
+- tapOn: "Passenger Mode"
+- extendedWaitUntil:
+    visible: ".*Tap the map to set pickup.*"
+    timeout: 90000
+- extendedWaitUntil:
+    notVisible: "Loading map.*"
+    timeout: 90000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-01-passenger-map
+# Pickup and destination inside synthetic coverage. The map opens over Manila (outside the
+# synthetic zones), and the app's GPS read falls back to a cached position, so the presenter
+# control 'Restore demo locations' is used. Map-tap and GPS paths are checked separately.
+- tapOn: "Demo controls"
+- assertVisible: "Demo controls"
+- tapOn: "Restore demo locations"
+- extendedWaitUntil:
+    visible: "Confirm DEMO booking"
+    timeout: 10000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-02-passenger-review-booking
+- tapOn: "Confirm DEMO booking"
+- extendedWaitUntil:
+    visible: ".*Booking in progress.*"
+    timeout: 15000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-03-passenger-searching
+# Driver side: the incoming offer is at the top of the driver sheet (no scrolling needed).
+- tapOn: "Driver Mode"
+- extendedWaitUntil:
+    visible: "Incoming DEMO booking"
+    timeout: 15000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-04-driver-incoming-offer
+- tapOn: "Accept"
+- extendedWaitUntil:
+    visible: "Start toward pickup"
+    timeout: 10000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-05-driver-accepted
+- tapOn: "Start toward pickup"
+- extendedWaitUntil:
+    visible: "Arrived at pickup"
+    timeout: 40000
+- tapOn: "Arrived at pickup"
+- extendedWaitUntil:
+    visible: "Start trip"
+    timeout: 10000
+- tapOn: "Start trip"
+- extendedWaitUntil:
+    visible: "Trip completed"
+    timeout: 90000
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-06-trip-completed-cash
+# Driver history: the trip appears once, marked completed, cash demo.
+- tapOn: "Trip history"
+- assertVisible: ".*DEMO fare.*"
+- assertVisible: ".*Mang Ben · 1.42 km.*"
+- assertVisible: ".*DEMO Pickup A.*DEMO Destination B.*"
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-07-driver-history
+- tapOn: "Close"
+# Return to queue, then switch to Passenger for the passenger history
+- tapOn: "Return to queue"
+- extendedWaitUntil:
+    visible: "Passenger Mode"
+    timeout: 10000
+- tapOn: "Passenger Mode"
+- assertVisible: "Driver Mode"
+- tapOn: "Trip history"
+- extendedWaitUntil:
+    visible: "Trip history"
+    timeout: 10000
+- assertVisible: ".*Mang Ben · 1.42 km.*"
+- assertVisible: ".*DEMO Pickup A.*DEMO Destination B.*"
+- assertVisible: ".*Trip completed.*"
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-08-passenger-history

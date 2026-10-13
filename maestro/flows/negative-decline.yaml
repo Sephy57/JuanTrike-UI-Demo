@@ -1,0 +1,34 @@
+# Scenario A: the first driver declines; the next eligible driver receives the offer.
+# Run: maestro test -e RUN=neg-decline maestro/flows/negative-decline.yaml
+appId: com.juantrike.uidemo
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Welcome to JuanTrike"
+    timeout: 120000
+- tapOn: "Passenger Mode"
+- extendedWaitUntil:
+    visible: ".*Tap the map to set pickup.*"
+    timeout: 90000
+- tapOn: "Demo controls"
+- tapOn: "Restore demo locations"
+- extendedWaitUntil:
+    visible: "Confirm DEMO booking"
+    timeout: 10000
+- tapOn: "Confirm DEMO booking"
+- extendedWaitUntil:
+    visible: ".*Booking in progress.*"
+    timeout: 15000
+- tapOn: "Driver Mode"
+- extendedWaitUntil:
+    visible: "Incoming DEMO booking"
+    timeout: 15000
+- assertVisible: "Mang Ben"
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-01-first-offer-mang-ben
+- tapOn: "Decline"
+- extendedWaitUntil:
+    visible: "Mang Joel"
+    timeout: 10000
+- assertVisible: "Incoming DEMO booking"
+- takeScreenshot: docs/presentation/screenshots/device/${RUN}-02-second-offer-after-decline
