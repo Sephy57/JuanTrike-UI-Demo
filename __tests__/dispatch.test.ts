@@ -29,6 +29,11 @@ function accepted(): DemoState {
 }
 
 describe('synthetic TODA geofence', () => {
+  it('uses an angular reference-like TODA-A shape without covering its rectangular corner', () => {
+    expect(DEMO_ZONES.find((zone) => zone.id === 'TODA-A')?.ring).toHaveLength(8);
+    expect(zoneFor({ latitude: 15.14, longitude: 120.582 })).toBeNull();
+  });
+
   it('places the demo pickup and destination inside TODA-A', () => {
     expect(zoneFor(DEMO_PICKUP_COORDS)?.id).toBe('TODA-A');
     expect(zoneFor(DEMO_DESTINATION_COORDS)?.id).toBe('TODA-A');
@@ -36,6 +41,16 @@ describe('synthetic TODA geofence', () => {
 
   it('reports the outside example as outside every zone', () => {
     expect(zoneFor(DEMO_OUTSIDE_POINT)).toBeNull();
+  });
+
+  it('treats a synthetic zone edge as covered instead of a coverage gap', () => {
+    expect(zoneFor({ latitude: 15.132, longitude: 120.588 })?.id).toBe('TODA-A');
+    expect(zoneFor({ latitude: 15.152, longitude: 120.59 })?.id).toBe('TODA-A');
+  });
+
+  it('rejects invalid synthetic geofence coordinates', () => {
+    expect(zoneFor({ latitude: Number.NaN, longitude: 120.59 })).toBeNull();
+    expect(zoneFor({ latitude: 15.14, longitude: 181 })).toBeNull();
   });
 
   it('gives each zone a distinct colour and label', () => {

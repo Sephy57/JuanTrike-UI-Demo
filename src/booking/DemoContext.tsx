@@ -8,6 +8,8 @@ import {
 } from './bookingMachine';
 import { DEMO_DESTINATION_COORDS, DEMO_PICKUP_COORDS, demoFareFor, haversineKm } from './geo';
 import { DEMO_OUTSIDE_POINT, zoneFor } from './demoZones';
+import { isAngelesCityPoint, isRouteInsideAngelesCity } from './cityBoundary';
+import { routeBetween } from './router';
 import type { Lang } from '../i18n/strings';
 
 export type AppMode = 'passenger' | 'driver';
@@ -16,9 +18,14 @@ export type DemoSpeed = 1 | 2 | 4;
 /** Simulated-clock tick, in real milliseconds. Demo time = tick * speed. */
 const TICK_MS = 250;
 
-interface DemoContextValue {
+/** Booking machine state. Changes on every simulated tick. */
+interface DemoStateValue {
   state: DemoState;
   dispatch: (event: DemoEvent) => void;
+}
+
+/** Role, language, demo-speed and presenter controls. Almost never change. */
+interface DemoControlsValue {
   mode: AppMode;
   setMode: (mode: AppMode) => void;
   /**
@@ -49,13 +56,25 @@ interface DemoContextValue {
   runOutsideCoverageExample: () => void;
 }
 
-const DemoContext = createContext<DemoContextValue | null>(null);
+export type DemoContextValue = DemoStateValue & DemoControlsValue;
+
+/**
+ * Booking + role state.
+ *
+ * Two contexts rather than one: `state` changes on every simulated tick while
+ * role, language, pause and speed almost never do. Splitting them means the
+ * demo panel and the welcome screen do not re-render four times a second just
+ * because a vehicle marker moved. `useDemo()` merges both for call sites that
+ * genuinely need everything.
+ */
+const DemoStateContext = createContext<DemoStateValue | null>(null);
+const DemoControlsContext = createContext<DemoControlsValue | null>(null);
 
 export const DRIVER_NAME = 'Mang Ben';
 
-const demoPickup: Place = { label: 'DEMO Pickup A', coords: DEMO_PICKUP_COORDS, source: 'demo' };
-const demoDestination: Place = { label: 'DEMO Destination B', coords: DEMO_DESTINATION_COORDS, source: 'demo' };
-const demoOutsideDestination: Place = { label: 'DEMO Outside Coverage', coords: DEMO_OUTSIDE_POINT, source: 'demo' };
+const demoPickup: Place = { label: 'Chacon St, Villa Paz', coords: DEMO_PICKUP_COORDS, source: 'demo' };
+const demoDestination: Place = { label: 'J. Surla St, Pulungbulu', coords: DEMO_DESTINATION_COORDS, source: 'demo' };
+const demoOutsideDestination: Place = { label: 'Outside the service area', coords: DEMO_OUTSIDE_POINT, source: 'demo' };
 
 export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [state, rawDispatch] = useReducer(
@@ -83,7 +102,10 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const confirmBooking = useCallback(() => {
     const { pickup, destination, status } = stateRef.current;
     if (status !== 'LOCATIONS_SELECTED' || !pickup || !destination) return false;
+    if (!isAngelesCityPoint(pickup.coords) || !isAngelesCityPoint(destination.coords)) return false;
     if (!zoneFor(pickup.coords) || !zoneFor(destination.coords)) return false;
+    const displayedRoute = routeBetween(pickup.coords, destination.coords);
+    if (!isRouteInsideAngelesCity(displayedRoute.points)) return false;
     const distanceKm = haversineKm(pickup.coords, destination.coords);
     rawDispatch({
       type: 'CONFIRM_BOOKING',
@@ -91,6 +113,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       now: Date.now(),
       distanceKm: Math.round(distanceKm * 100) / 100,
       fareDemo: demoFareFor(distanceKm),
+      passengerName: 'Juan dela Cruz',
     });
     return true;
   }, []);
@@ -152,10 +175,10 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const value = useMemo<DemoContextValue>(
+  const stateValue = useMemo<DemoStateValue>(() => ({ state, dispatch }), [state, dispatch]);
+
+  const controlsValue = useMemo<DemoControlsValue>(
     () => ({
-      state,
-      dispatch,
       mode,
       setMode,
       switchMode,
@@ -173,14 +196,17 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       runOutsideCoverageExample,
     }),
     [
-      state,
-      dispatch,
       mode,
+      setMode,
       switchMode,
       lang,
+      setLang,
       driverOnline,
+      setDriverOnline,
       paused,
+      setPaused,
       speed,
+      setSpeed,
       confirmBooking,
       restoreDemoLocations,
       runExampleBooking,
@@ -188,11 +214,30 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     ],
   );
 
-  return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
+  return (
+    <DemoStateContext.Provider value={stateValue}>
+      <DemoControlsContext.Provider value={controlsValue}>{children}</DemoControlsContext.Provider>
+    </DemoStateContext.Provider>
+  );
 }
 
-export function useDemo(): DemoContextValue {
-  const ctx = useContext(DemoContext);
-  if (!ctx) throw new Error('useDemo must be used inside DemoProvider');
+/** Booking machine state only. Re-renders on every simulated tick. */
+export function useDemoState(): DemoStateValue {
+  const ctx = useContext(DemoStateContext);
+  if (!ctx) throw new Error('useDemoState must be used inside DemoProvider');
   return ctx;
+}
+
+/** Role, language and presenter controls. Does not re-render on ticks. */
+export function useDemoControls(): DemoControlsValue {
+  const ctx = useContext(DemoControlsContext);
+  if (!ctx) throw new Error('useDemoControls must be used inside DemoProvider');
+  return ctx;
+}
+
+/** Merged view, for call sites that genuinely need both halves. */
+export function useDemo(): DemoContextValue {
+  const { state, dispatch } = useDemoState();
+  const controls = useDemoControls();
+  return useMemo(() => ({ state, dispatch, ...controls }), [state, dispatch, controls]);
 }

@@ -50,6 +50,8 @@ hs_err_pid*.log
 .claude/*.lock
 .claude/settings.local.json
 data-processing/
+# Raw OSM responses cached by tools/extract-roads.mjs (~30 MB); regenerate with the tool
+tools/cache/
 # Internal reports and raw build logs (local paths; private project references)
 docs/PROJECT_ISOLATION_REPORT.md
 docs/logs/

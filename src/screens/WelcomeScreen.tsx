@@ -1,37 +1,43 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDemo } from '../booking/DemoContext';
-import { Badge, Button, Muted, Title } from '../components/Ui';
+import { useDemoControls } from '../booking/DemoContext';
+import { Button, Muted, Title } from '../components/Ui';
 import { LanguageToggle } from '../components/LanguageToggle';
+import { BrandLogo } from '../components/BrandLockup';
 import { t } from '../i18n/strings';
-import { colors, radius, spacing } from '../theme/tokens';
+import { colors, spacing, typography } from '../theme/tokens';
 
 /**
  * Mode selection. No login: choosing a mode only sets local state and never
  * calls an authentication service.
  */
-export function WelcomeScreen({ onChoose }: { onChoose: (mode: 'passenger' | 'driver') => void }) {
-  const { lang, setLang } = useDemo();
+export function WelcomeScreen({ onChoose, onOpenInfo }: { onChoose: (mode: 'passenger' | 'driver') => void; onOpenInfo?: () => void }) {
+  const { lang, setLang } = useDemoControls();
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <View style={styles.topRow}>
-        <Badge label={t(lang, 'demoBadge')} tone="accent" />
+        <Pressable accessibilityRole="button" accessibilityLabel={t(lang, 'aboutApp')} onPress={onOpenInfo} style={styles.aboutButton}>
+          <Text style={styles.aboutText}>{t(lang, 'aboutApp')}</Text>
+        </Pressable>
+        <LanguageToggle lang={lang} onChange={setLang} />
       </View>
 
-      <View style={styles.hero}>
-        {/* Official logo asset is pending; the wordmark is plain text, not a logo. */}
-        <Text style={styles.wordmark} accessibilityRole="header">{t(lang, 'appName')}</Text>
-        <View style={styles.accentBar} />
-        <Title style={styles.welcomeTitle}>{t(lang, 'welcomeTitle')}</Title>
-        <Muted style={styles.welcomeBody}>{t(lang, 'welcomeBody')}</Muted>
-      </View>
+      <ScrollView
+        testID="welcome-content-scroll"
+        style={styles.scrollView}
+        contentContainerStyle={styles.scroll}
+      >
+        <View style={styles.hero}>
+          <BrandLogo width={252} height={220} />
+          <Text style={styles.tagline}>{t(lang, 'brandTagline')}</Text>
+          <Title style={styles.welcomeTitle}>{t(lang, 'welcomeTitle')}</Title>
+          <Muted style={styles.welcomeBody}>{t(lang, 'welcomeBody')}</Muted>
+        </View>
+
+      </ScrollView>
 
       <View style={styles.actions}>
-        <View style={styles.langRow}>
-          <Muted>{t(lang, 'language')}</Muted>
-          <LanguageToggle lang={lang} onChange={setLang} />
-        </View>
         <Button
           label={t(lang, 'passengerMode')}
           onPress={() => onChoose('passenger')}
@@ -45,22 +51,22 @@ export function WelcomeScreen({ onChoose }: { onChoose: (mode: 'passenger' | 'dr
           style={styles.modeBtn}
           testID="mode-driver"
         />
-        <Muted style={styles.footnote}>{t(lang, 'notReal')}</Muted>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.surface, padding: spacing.xl, justifyContent: 'space-between' },
+  root: { flex: 1, backgroundColor: colors.surface, padding: spacing.xl },
   topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  hero: { alignItems: 'center', gap: spacing.md, paddingTop: spacing.xl },
-  wordmark: { fontSize: 44, fontWeight: '900', color: colors.primary, letterSpacing: -1 },
-  accentBar: { width: 56, height: 6, borderRadius: radius.pill, backgroundColor: colors.accent },
-  welcomeTitle: { textAlign: 'center', fontSize: 22, marginTop: spacing.lg },
+  aboutButton: { minHeight: 40, justifyContent: 'center', paddingHorizontal: spacing.sm },
+  aboutText: { color: colors.primaryDark, fontSize: 12, fontWeight: '700' },
+  scrollView: { flex: 1 },
+  scroll: { flexGrow: 1, justifyContent: 'center' },
+  hero: { alignItems: 'center', gap: spacing.md },
+  tagline: { color: colors.successDark, fontSize: 13, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase' },
+  welcomeTitle: { ...typography.title, textAlign: 'center', fontSize: 22, marginTop: spacing.sm },
   welcomeBody: { textAlign: 'center', paddingHorizontal: spacing.md },
-  actions: { gap: spacing.md, paddingBottom: spacing.lg },
+  actions: { gap: spacing.md, paddingTop: spacing.lg, paddingBottom: spacing.lg },
   modeBtn: { minHeight: 60 },
-  footnote: { textAlign: 'center' },
-  langRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
 });

@@ -1,7 +1,7 @@
 import type { LatLng } from './bookingMachine';
 
-/** Angeles City, Pampanga — default map viewport (not a claim about the user's location). */
-export const ANGELES_CITY_CENTER: LatLng = { latitude: 15.1450, longitude: 120.5960 };
+/** Downtown Angeles City camera center, biased north to keep the pickup pin clear of the passenger overlay. */
+export const ANGELES_CITY_CENTER: LatLng = { latitude: 15.1480, longitude: 120.5960 };
 
 export const DEMO_PICKUP_COORDS: LatLng = { latitude: 15.1466, longitude: 120.5879 };
 export const DEMO_DESTINATION_COORDS: LatLng = { latitude: 15.1372, longitude: 120.5968 };
@@ -87,4 +87,83 @@ export function polylineKm(points: LatLng[]): number {
   let total = 0;
   for (let i = 1; i < points.length; i++) total += haversineKm(points[i - 1], points[i]);
   return total;
+}
+
+/** Initial bearing in degrees (0 = north, clockwise) from `a` towards `b`. */
+export function bearingDeg(a: LatLng, b: LatLng): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const φ1 = toRad(a.latitude);
+  const φ2 = toRad(b.latitude);
+  const Δλ = toRad(b.longitude - a.longitude);
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  return (Math.atan2(y, x) * 180) / Math.PI;
+}
+
+/** Normalises any angle in degrees to the range (-180, 180]. */
+export function normaliseDegrees(deg: number): number {
+  let d = deg % 360;
+  if (d > 180) d -= 360;
+  if (d <= -180) d += 360;
+  return d;
+}
+
+/**
+ * Heading of the path at fraction `t`: the bearing of the segment the point
+ * currently sits on. Falls back to the bearing of the last segment at `t = 1`.
+ */
+export function headingAt(points: LatLng[], t: number): number {
+  if (points.length < 2) return 0;
+  const clamped = Math.min(1, Math.max(0, t));
+  let travelled = 0;
+  const total = polylineKm(points);
+  if (total === 0) return bearingDeg(points[0], points[points.length - 1]);
+  const target = total * clamped;
+  for (let i = 1; i < points.length; i += 1) {
+    const seg = haversineKm(points[i - 1], points[i]);
+    if (travelled + seg >= target || i === points.length - 1) {
+      return bearingDeg(points[i - 1], points[i]);
+    }
+    travelled += seg;
+  }
+  return bearingDeg(points[points.length - 2], points[points.length - 1]);
+}
+
+export interface RouteSplit {
+  /** Everything already travelled, ending exactly at the split point. */
+  traveled: LatLng[];
+  /** Everything still ahead, starting exactly at the split point. */
+  remaining: LatLng[];
+}
+
+/**
+ * Cuts a polyline at fraction `t` (0..1 of its length) so the map can draw the
+ * completed part differently from the part still to come. Both halves share the
+ * split point, so the two drawn lines meet without a visible gap.
+ */
+export function splitRoute(points: LatLng[], t: number): RouteSplit {
+  if (points.length < 2) return { traveled: points.slice(), remaining: [] };
+  const clamped = Math.min(1, Math.max(0, t));
+  if (clamped <= 0) return { traveled: [], remaining: points.slice() };
+  if (clamped >= 1) return { traveled: points.slice(), remaining: [] };
+
+  const total = polylineKm(points);
+  const target = total * clamped;
+  const traveled: LatLng[] = [points[0]];
+  let travelled = 0;
+  for (let i = 1; i < points.length; i += 1) {
+    const seg = haversineKm(points[i - 1], points[i]);
+    if (travelled + seg >= target) {
+      const f = seg === 0 ? 0 : (target - travelled) / seg;
+      const split: LatLng = {
+        latitude: points[i - 1].latitude + (points[i].latitude - points[i - 1].latitude) * f,
+        longitude: points[i - 1].longitude + (points[i].longitude - points[i - 1].longitude) * f,
+      };
+      traveled.push(split);
+      return { traveled, remaining: [split, ...points.slice(i)] };
+    }
+    traveled.push(points[i]);
+    travelled += seg;
+  }
+  return { traveled: points.slice(), remaining: [] };
 }

@@ -31,6 +31,7 @@ export type PaymentStatus = 'PENDING' | 'COLLECTED_DEMO' | 'NOT_COLLECTED';
 
 export interface Booking {
   id: string;
+  passengerName: string;
   pickup: Place;
   destination: Place;
   distanceKm: number;
@@ -93,7 +94,7 @@ export type DemoEvent =
   | { type: 'SET_DESTINATION'; place: Place }
   | { type: 'CLEAR_LOCATIONS' }
   | { type: 'RESTORE_DEMO_LOCATIONS'; pickup: Place; destination: Place }
-  | { type: 'CONFIRM_BOOKING'; id: string; now: number; distanceKm: number; fareDemo: number }
+  | { type: 'CONFIRM_BOOKING'; id: string; now: number; distanceKm: number; fareDemo: number; passengerName?: string }
   | { type: 'BEGIN_SEARCH' }
   | { type: 'OFFER_TO_DRIVER'; now?: number }
   | { type: 'ACCEPT_BOOKING'; driverName: string }
@@ -183,6 +184,7 @@ export function transition(state: DemoState, event: DemoEvent): DemoState {
         phaseRemaining: DEMO_POLICY.REQUEST_SECONDS,
         booking: {
           id: event.id,
+          passengerName: event.passengerName ?? 'Juan dela Cruz',
           pickup: state.pickup,
           destination: state.destination,
           distanceKm: event.distanceKm,

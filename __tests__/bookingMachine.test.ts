@@ -49,6 +49,7 @@ describe('location selection', () => {
     const booked = run(withLocations(), [
       { type: 'CONFIRM_BOOKING', id: 'DEMO-1', now: 1, distanceKm, fareDemo },
     ]);
+    expect(booked.booking?.passengerName).toBe('Juan dela Cruz');
     expect(transition(booked, { type: 'SET_PICKUP', place: destination })).toBe(booked);
   });
 });

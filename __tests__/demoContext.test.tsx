@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { act, render } from '@testing-library/react-native';
 import { DemoProvider, useDemo } from '../src/booking/DemoContext';
 import { DEMO_POLICY } from '../src/booking/demoZones';
+import * as router from '../src/booking/router';
+import { DEMO_DESTINATION_COORDS, DEMO_PICKUP_COORDS } from '../src/booking/geo';
 
 type Api = ReturnType<typeof useDemo>;
 
@@ -222,6 +224,45 @@ describe('DemoProvider simulated clock (deterministic, fake timers)', () => {
     });
     expect(ok).toBe(false);
     expect(api.state.status).toBe('LOCATIONS_SELECTED');
+  });
+
+  it('refuses a displayed fallback route that leaves Angeles City', async () => {
+    await mount();
+    await act(async () => api.restoreDemoLocations());
+    const routeSpy = jest.spyOn(router, 'routeBetween').mockReturnValue({
+      points: [
+        DEMO_PICKUP_COORDS,
+        { latitude: 14.5995, longitude: 120.9842 },
+        DEMO_DESTINATION_COORDS,
+      ],
+      distanceKm: 300,
+      source: 'illustrative',
+      snapMetres: 0,
+    });
+
+    let ok = true;
+    await act(async () => {
+      ok = api.confirmBooking();
+    });
+
+    expect(routeSpy).toHaveBeenCalledWith(DEMO_PICKUP_COORDS, DEMO_DESTINATION_COORDS);
+    expect(ok).toBe(false);
+    expect(api.state.status).toBe('LOCATIONS_SELECTED');
+    routeSpy.mockRestore();
+  });
+
+  it('confirms the bundled Angeles City demo trip after city, TODA, and route checks', async () => {
+    await mount();
+    await act(async () => api.restoreDemoLocations());
+
+    let ok = false;
+    await act(async () => {
+      ok = api.confirmBooking();
+    });
+
+    expect(ok).toBe(true);
+    expect(api.state.status).toBe('BOOKING_REQUESTED');
+    expect(api.state.booking?.fareDemo).toBeGreaterThan(0);
   });
 
   it('reset during an active offer returns to the initial state and stops the clock', async () => {

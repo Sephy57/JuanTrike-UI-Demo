@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { nextAdvanceEvent } from '../booking/bookingMachine';
-import { DemoSpeed, useDemo } from '../booking/DemoContext';
+import { DemoSpeed, useDemoControls, useDemoState } from '../booking/DemoContext';
 import { t } from '../i18n/strings';
 import { colors, radius, spacing } from '../theme/tokens';
 import { Button, Muted, Title } from './Ui';
@@ -15,22 +15,23 @@ const SPEEDS: DemoSpeed[] = [1, 2, 4];
  * use, so the panel cannot put the app into a state a user could not reach.
  * SYNTHETIC DEMO ONLY: remove this panel from any production build.
  */
-export function DemoPanel({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const {
-    state,
-    dispatch,
-    lang,
-    setLang,
-    mode,
-    switchMode,
-    restoreDemoLocations,
-    runExampleBooking,
-    runOutsideCoverageExample,
-    paused,
-    setPaused,
-    speed,
-    setSpeed,
-  } = useDemo();
+export function DemoPanel({
+  visible,
+  onClose,
+  onSwitchRole,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onSwitchRole?: () => void;
+}) {
+  const { state, dispatch } = useDemoState();
+  const { lang, setLang, mode, switchMode, restoreDemoLocations, runExampleBooking, runOutsideCoverageExample, paused, setPaused, speed, setSpeed } =
+    useDemoControls();
+
+  // Closed, the panel renders nothing at all, so it stops subscribing to the
+  // booking clock. Only the open panel pays for re-rendering on every tick.
+  if (!visible) return null;
+
   const advance = nextAdvanceEvent(state);
   const offerOpen = state.status === 'DRIVER_OFFERED';
   const cancellable =
@@ -43,6 +44,14 @@ export function DemoPanel({ visible, onClose }: { visible: boolean; onClose: () 
   const run = (fn: () => void) => {
     fn();
     onClose();
+  };
+
+  const switchRole = () => {
+    if (onSwitchRole) {
+      onSwitchRole();
+      return;
+    }
+    run(() => switchMode(mode, mode === 'passenger' ? 'driver' : 'passenger'));
   };
 
   const nextSpeed = () => {
@@ -86,7 +95,7 @@ export function DemoPanel({ visible, onClose }: { visible: boolean; onClose: () 
               disabled={!offerOpen}
               onPress={() => run(() => dispatch({ type: 'OFFER_EXPIRED' }))}
             />
-            <Button label={t(lang, 'switchRole')} variant="ghost" onPress={() => run(() => switchMode(mode, mode === 'passenger' ? 'driver' : 'passenger'))} />
+            <Button label={t(lang, 'switchRole')} variant="ghost" onPress={switchRole} />
             <Button label={t(lang, 'restoreLocations')} variant="ghost" onPress={() => run(() => restoreDemoLocations())} />
             <Button label={t(lang, 'exampleBooking')} variant="ghost" onPress={() => run(() => runExampleBooking())} />
             <Button label={t(lang, 'simulateOutside')} variant="ghost" onPress={() => run(() => runOutsideCoverageExample())} />
