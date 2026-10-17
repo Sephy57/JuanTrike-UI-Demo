@@ -147,6 +147,19 @@ Verified results from the earlier release (see [`docs/presentation/TEST_RESULTS.
 
 The earlier checks were run on Android emulators only (x86_64). **The ARM64 APK has not yet been installed or smoke-tested on a physical Android phone.** Physical-device verification is pending.
 
+## Latest Android screenshot evidence
+
+The current presentation APK (`826D93C0…4A27DEAE`, x86_64) launched on the AOSP emulator, but the session showed an Android “System UI isn’t responding” dialog. [View the genuine current-artifact capture](docs/screenshots/device/20261017-juantrike-final-presentation/welcome.png). Runtime acceptance remains **PARTIAL**.
+
+The four journey captures below are genuine emulator screenshots from the earlier verified V3 APK (SHA-256 `746FD51AC8A20E36BB0839C4B8BDA656C79009EDC2C86F3C656AEA2ABC8D6D1B`). They document that historical artifact and do not establish acceptance for the current source or APK.
+
+| Passenger route selection | Driver incoming offer |
+|---|---|
+| <img src="docs/screenshots/device/20261017-juantrike-v3-polygon-refinement/sample-request.png" alt="Passenger route selection on the earlier V3 APK" width="280"> | <img src="docs/screenshots/device/20261017-juantrike-v3-polygon-refinement/driver-offer.png" alt="Driver incoming offer on the earlier V3 APK" width="280"> |
+
+| Active trip | Trip completed |
+|---|---|
+| <img src="docs/screenshots/device/20261017-juantrike-v3-polygon-refinement/trip-started-initial.png" alt="Active trip on the earlier V3 APK" width="280"> | <img src="docs/screenshots/device/20261017-juantrike-v3-polygon-refinement/completed.png" alt="Completed trip on the earlier V3 APK" width="280"> |
 ## Screenshots
 
 Captured from the release build on the x86_64 emulator.
